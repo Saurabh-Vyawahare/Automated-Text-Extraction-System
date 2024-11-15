@@ -1,0 +1,48 @@
+# Use the official Apache Airflow image as the base image
+FROM apache/airflow:2.10.2
+
+# Switch to root for installing system-level dependencies
+USER root
+
+# Install system dependencies needed for Airflow
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3-dev \
+    libxml2-dev \
+    libxslt-dev \
+    libz-dev \
+    libjpeg-dev \
+    libssl-dev \
+    poppler-utils \
+    ghostscript \
+    tesseract-ocr \
+    && apt-get clean
+
+# Copy the requirements.txt file
+COPY requirements.txt .
+
+# Install Python dependencies as airflow user to avoid permission issues
+USER airflow
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Switch back to root for setting up entrypoint permissions
+USER root
+# Copy and set permissions for the custom entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Switch back to the airflow user for regular operations
+USER airflow
+
+# Copy DAGs and plugins into Airflow's directories
+COPY ./dags /opt/airflow/dags
+COPY ./plugins /opt/airflow/plugins
+
+# Expose the default Airflow webserver port
+EXPOSE 8080
+
+# Use the custom entrypoint script
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Define the default command to run Airflow's webserver
+CMD ["airflow", "webserver"]
