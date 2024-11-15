@@ -1,0 +1,17 @@
+datasets==3.0.1
+docutils<0.21
+fastapi[all]==0.115.0
+uvicorn==0.31.0
+passlib==1.7.4
+python-jose==3.3.0
+pyjwt==2.9.0
+sqlalchemy==2.0.35
+pymysql==1.1.1
+bcrypt==4.2.0
+mysql-connector-python==9.0.0
+python-multipart==0.0.12
+python-dotenv==1.0.1
+boto3==1.35.38
+openai==0.28.0
+streamlit==1.39.0
+numpy==1.25.0
